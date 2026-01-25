@@ -4,6 +4,14 @@ import ChatInput, { type ChatFormData } from './ChatInput';
 import type { Message } from './ChatMessages';
 import ChatMessages from './ChatMessages';
 import TypingIndicator from './TypingIndicator';
+import popSound from '../../assets/sounds/pop.mp3';
+import notificationSound from '../../assets/sounds/notification.mp3';
+
+const popAudio = new Audio(popSound);
+popAudio.volume = 0.2;
+
+const notificationAudio = new Audio(notificationSound);
+notificationAudio.volume = 0.2;
 
 type ChatResponse = {
    message: string;
@@ -13,13 +21,14 @@ const ChatBot = () => {
    const [messages, setMessages] = useState<Message[]>([]);
    const [isBotTyping, setIsBotTyping] = useState(false);
    const [error, setError] = useState('');
-   const conversationId = useRef(crypto.randomUUID());
+   const conversationId = useRef(crypto.randomUUID()); // a use ref not a use state because we don't need re-render on change
 
    const onSubmit = async ({ prompt }: ChatFormData) => {
       try {
          setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
          setIsBotTyping(true);
          setError('');
+         popAudio.play();
 
          const { data } = await axios.post<ChatResponse>('/api/chat', {
             prompt,
@@ -29,6 +38,7 @@ const ChatBot = () => {
             ...prev,
             { content: data.message, role: 'bot' },
          ]);
+         notificationAudio.play();
       } catch (error) {
          console.error(error);
          setError('Something went wrong, try again!');

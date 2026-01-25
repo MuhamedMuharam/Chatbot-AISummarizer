@@ -22,9 +22,10 @@ export const chatContoller = {
       }
       try {
          const { prompt, conversationId } = req.body;
-         const response = await chatService.sendMessage(prompt, conversationId);
+         const response = await chatService.sendMessage(prompt, conversationId); // delegate to chat service
+         // this response is of type ChatResponse
 
-         res.json({ message: response.message });
+         res.json({ message: response.message }); // return json response
       } catch (error) {
          res.status(500).json({ error: 'Failed to generate a response' });
       }
