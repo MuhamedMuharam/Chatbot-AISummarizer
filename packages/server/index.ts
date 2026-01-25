@@ -1,22 +1,14 @@
 import express from 'express';
-import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import router from './routes.js';
 
 dotenv.config();
 
 const app = express();
+app.use(express.json()); // middleware to parse response body as JSON
+app.use(router);
+
 const port = process.env.PORT || 3000;
-
-app.get('/', (req: Request, res: Response) => {
-   res.send('Hello, World!');
-});
-app.get('/api/hello', (req: Request, res: Response) => {
-   res.json({ message: 'Hello from the API!' });
-});
-
-app.get('/api/hello2', (req: Request, res: Response) => {
-   res.json({ message: 'Hello from the 2!' });
-});
 
 app.listen(port, () => {
    //starts our web server
