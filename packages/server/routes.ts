@@ -1,6 +1,8 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { chatContoller } from './controllers/chat.controller';
+import { PrismaClient } from './generated/prisma';
+import { reviewController } from './controllers/review.controller';
 
 const router = express.Router();
 
@@ -16,5 +18,12 @@ router.get('/api/hello2', (req: Request, res: Response) => {
 });
 
 router.post('/api/chat', chatContoller.sendMessage);
+
+router.get('/api/products/:id/reviews', reviewController.getReviews);
+
+router.post(
+   '/api/products/:id/reviews/summarize',
+   reviewController.summarizeReviews
+);
 
 export default router;

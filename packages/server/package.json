@@ -8,15 +8,16 @@
       "dev": "bun --watch run index.ts"
    },
    "devDependencies": {
+      "@prisma/client": "6",
       "@types/bun": "latest",
       "@types/express": "^5.0.6",
-      "prisma": "^7.3.0"
+      "prisma": "6"
    },
    "peerDependencies": {
       "typescript": "^5"
    },
    "dependencies": {
-      "@prisma/client": "^7.3.0",
+      "dayjs": "^1.11.19",
       "dotenv": "^17.2.3",
       "express": "^5.2.1",
       "openai": "^6.16.0",
