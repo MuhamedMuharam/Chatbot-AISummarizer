@@ -7,7 +7,7 @@ export const reviewRepository = {
       return prisma.review.findMany({
          where: { productId },
          orderBy: { createdAt: 'desc' },
-         take: limit,
+         take: limit, //limit to 'specified number of reviews if provided
       });
    },
 
