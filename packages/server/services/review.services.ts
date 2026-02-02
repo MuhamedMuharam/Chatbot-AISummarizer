@@ -15,16 +15,20 @@ export const reviewService = {
       const reviews = await reviewRepository.getReviews(productId, 10);
 
       const joinedReviews = reviews.map((r) => r.content).join('\n\n');
-      const prompt = template.replace('{{reviews}}', joinedReviews);
+      //const prompt = template.replace('{{reviews}}', joinedReviews);
 
-      const response = await llmClient.generateText({
-         model: 'gpt-4.1-mini',
-         prompt,
-         temperature: 0.2, // no creativity needed for summarization
-         maxTokens: 500,
-      });
+      // ignore OpenAI for now
+      // const response = await llmClient.generateText({
+      //    model: 'gpt-4.1-mini',
+      //    prompt,
+      //    temperature: 0.2, // no creativity needed for summarization
+      //    maxTokens: 500,
+      // });
+      //  const summary = response.text;
 
-      const summary = response.text;
+      //we are gonne use the Hugging Face summarization model
+      const summary = await llmClient.summarizeReviews(joinedReviews);
+
       await reviewRepository.storeReviewSummaary(productId, summary);
       return summary;
       // then send them to an LLM to generate a summary

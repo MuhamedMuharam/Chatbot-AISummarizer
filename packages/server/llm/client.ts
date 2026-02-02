@@ -1,8 +1,12 @@
 import { OpenAI } from 'openai';
+import { InferenceClient } from '@huggingface/inference';
+import summarizePrompt from '../prompts/summarize-reviews2.txt';
 
-const client = new OpenAI({
+const openAIClient = new OpenAI({
    apiKey: process.env.OPENAI_API_KEY,
 });
+
+const inferenceClient = new InferenceClient(process.env.HF_TOKEN);
 
 type GenerateTextOptions = {
    model?: string;
@@ -27,7 +31,7 @@ export const llmClient = {
       maxTokens = 300,
       previousResponseId,
    }: GenerateTextOptions): Promise<GenerateTextResult> {
-      const response = await client.responses.create({
+      const response = await openAIClient.responses.create({
          model,
          input: prompt,
          instructions,
@@ -36,5 +40,27 @@ export const llmClient = {
          previous_response_id: previousResponseId,
       });
       return { id: response.id, text: response.output_text };
+   },
+
+   async summarizeReviews(text: string) {
+      //ignore bart for now
+      // const output = await inferenceClient.summarization({
+      //    model: 'facebook/bart-large-cnn',
+      //    inputs: text,
+      //    provider: 'hf-inference',
+      // });
+      // console.log(output.summary_text);
+
+      const chatCompletion = await inferenceClient.chatCompletion({
+         model: 'meta-llama/Llama-3.1-8B-Instruct:novita',
+         messages: [
+            { role: 'system', content: summarizePrompt },
+            {
+               role: 'user',
+               content: text,
+            },
+         ],
+      });
+      return chatCompletion.choices[0]?.message.content || '';
    },
 };
