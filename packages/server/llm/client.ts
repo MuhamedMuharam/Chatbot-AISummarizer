@@ -1,3 +1,4 @@
+import { Ollama } from 'ollama';
 import { OpenAI } from 'openai';
 import { InferenceClient } from '@huggingface/inference';
 import summarizePrompt from '../prompts/summarize-reviews2.txt';
@@ -7,6 +8,8 @@ const openAIClient = new OpenAI({
 });
 
 const inferenceClient = new InferenceClient(process.env.HF_TOKEN);
+
+const ollamaClient = new Ollama();
 
 type GenerateTextOptions = {
    model?: string;
@@ -51,8 +54,8 @@ export const llmClient = {
       // });
       // console.log(output.summary_text);
 
-      const chatCompletion = await inferenceClient.chatCompletion({
-         model: 'meta-llama/Llama-3.1-8B-Instruct:novita',
+      const response = await ollamaClient.chat({
+         model: 'tinyllama',
          messages: [
             { role: 'system', content: summarizePrompt },
             {
@@ -61,6 +64,7 @@ export const llmClient = {
             },
          ],
       });
-      return chatCompletion.choices[0]?.message.content || '';
+      //return chatCompletion.choices[0]?.message.content || '';
+      return response.message.content;
    },
 };
